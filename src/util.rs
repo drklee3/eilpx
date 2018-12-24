@@ -34,7 +34,6 @@ pub fn setup_logger(verbosity: u64) -> Result<()> {
             ))
         })
         .chain(std::io::stderr())
-        .chain(fern::log_file("output.log")?)
         .apply()?;
 
     Ok(())

@@ -32,7 +32,7 @@ cd pixel-sorter
 cargo build --release
 ```
 
-## Example
+## Examples
 
 ```bash
 pixel-sorter -i img/tamsui.jpg -o img/tamsui_sorted.jpg -b max -t 175
@@ -41,10 +41,15 @@ pixel-sorter -i img/tamsui.jpg -o img/tamsui_sorted.jpg -b max -t 175
 #  -b max -t 175               sort only pixels with a max luma value of 175
 ```
 
-### Original Image
+Original Image | Sorted Image |
+-------------- | ------------ |
+![Original Image](img/tamsui.jpg) | ![Sorted Image](img/tamsui_sorted.jpg) |
 
-![Original Image](img/tamsui.jpg)
 
-### Sorted Image
+```bash
+pixel-sorter -i img/lighthouse.jpg -o img/lighthouse_sorted.jpg
+```
 
-![Sorted Image](img/tamsui_sorted.jpg)
+Original Image | Sorted Image |
+-------------- | ------------ |
+![Original Image](img/lighthouse.jpg) | ![Sorted Image](img/lighthouse_sorted.jpg) |

@@ -1,11 +1,12 @@
 pub mod error;
+mod config;
 mod util;
 use crate::error::Result;
 use crate::util::setup_logger;
 use crate::config::Config;
 
 use clap::{Arg, App};
-use image::{DynamicImage, GenericImageView};
+use image::{DynamicImage, GenericImageView, ImageBuffer, Pixel};
 use log::{error, debug, info};
 use std::{path::Path, process};
 
@@ -24,6 +25,21 @@ fn main() -> Result<()> {
             .help("Sets direction of sorting")
             .short("d")
             .default_value("horizontal")
+            .possible_values(&["horizontal", "vertical"])
+            .case_insensitive(true)
+            .takes_value(true)
+        )
+        .arg(Arg::with_name("mode")
+            .help("Sets mode of sorting")
+            .short("m")
+            .default_value("luma")
+            .possible_values(&["red", "green", "blue", "alpha", "luma"])
+            .case_insensitive(true)
+            .takes_value(true)
+        )
+        .arg(Arg::with_name("threshold")
+            .help("Sets threshold of sorting")
+            .short("t")
             .takes_value(true)
         )
         .arg(Arg::with_name("output")
@@ -32,7 +48,7 @@ fn main() -> Result<()> {
             .required(true)
             .takes_value(true)
         )
-        .arg(Arg::with_name("v")
+        .arg(Arg::with_name("verbosity")
             .short("v")
             .multiple(true)
             .help("Sets the level of verbosity"))
@@ -43,12 +59,12 @@ fn main() -> Result<()> {
         .value_of("input")
         .unwrap();
 
-    let verbosity: u64 = matches.occurrences_of("verbose");
+    let verbosity: u64 = matches.occurrences_of("verbosity");
     setup_logger(verbosity)?;
 
     info!("Opening file: {}", input);
 
-    let mut img = match image::open(input) {
+    let img = match image::open(input) {
         Ok(i) => i,
         Err(e) => {
             error!("Failed to open file: {}", e);
@@ -56,26 +72,118 @@ fn main() -> Result<()> {
         }
     };
 
+    let direction = matches
+        .value_of("direction")
+        .unwrap();
+    
+    let mode = matches
+        .value_of("mode")
+        .unwrap();
+    
+    let threshold = matches
+        .value_of("threshold");
+
+    let conf = Config::new(direction, mode, threshold);
+
+    debug!("Using configuration: {:?}", conf);
+
     // sort image duh
-    sort_image(&mut img, config);
+    let sorted = sort_image(img, conf);
 
     let output_path = matches
         .value_of("output")
         .map(Path::new)
         .unwrap();
     // save image duh
-    save_image(img, output_path);
+    save_image(sorted, output_path);
 
     Ok(())
 }
 
-fn sort_image(img: &mut DynamicImage, config: Config) {
-    let (width, height) = img.dimensions();
-    info!("Sorting {}x{} image", width, height);
-    let pixels = img.raw_pixels();
+fn get_value(config: &Config, pixel: &image::Rgba<u8>) -> u8 {
+    match config.mode {
+        config::Mode::Red   => pixel.data[2],
+        config::Mode::Green => pixel.data[1],
+        config::Mode::Blue  => pixel.data[0],
+        config::Mode::Alpha => pixel.data[3],
+        config::Mode::Luma  => {
+            // https://en.wikipedia.org/wiki/Relative_luminance
+             (0.2126 * pixel.data[2] as f64
+             + 0.7152 * pixel.data[1] as f64
+             + 0.0722 * pixel.data[0] as f64) as u8
+        },
+    }
 }
 
-fn save_image(img: DynamicImage, path: &Path) {
+fn meets_threshold(config: &Config, pixel: &image::Rgba<u8>) -> bool {
+    let value = get_value(config, pixel);
+    // if value is greater than the threshold,
+    // could add option to let threshold be upper limit instead of lower
+    value > config.threshold
+}
+
+fn sort_image(img: DynamicImage, config: Config)
+    -> image::RgbaImage {
+    let (width, height) = img.dimensions();
+    info!("Sorting {}x{} image", width, height);
+    let buf = img.to_rgba();
+    // vec of pixels rgb? so cant sort directly, need to convert
+    // to vec<T> where T is an entire pixel w/ RGB data 
+    let mut pixels: Vec<_> = img.pixels().collect();
+    let mut start: i32 = -1;
+    let mut end: i32 = -1;
+    let mut row_num = 0;
+
+    for (x, y, pixel) in buf.enumerate_pixels() {
+        // new row, reset
+        if row_num != y {
+            start = -1;
+            end = - 1;
+        }
+
+        // if reaches end of a slice that meets threshold
+        // OR if it reaches the end of a row
+        if !meets_threshold(&config, &pixel) || x == width - 1 {
+            // sort a slice if there is a start / end
+            if start != -1 && end > start {
+                // ok to cast to u32 since checking if start/end is positive
+                let start_index = (y * width + start as u32) as usize;
+                let end_index = (y * width + end as u32) as usize;
+
+                debug!("sorting [{}..{}]", start_index, end_index);
+
+                pixels[start_index..end_index]
+                    .sort_by_key(|p| get_value(&config, &p.2));
+            }
+
+            // reset threshold
+            start = -1;
+        } else if start == -1 {
+            // update start pos if only it is
+            // the first that meets threshold
+            start = x as i32;
+        } else if start != -1 {
+            end = x as i32;
+        }
+
+        row_num = y;
+    }
+
+    let raw_pixels: Vec<u8> = pixels
+        .iter()
+        .flat_map(|p| p
+            .2.data.iter()
+        )
+        .map(|x| x.clone())
+        .collect();
+
+    // uses original width/height so should be large enough
+    ImageBuffer::from_vec(width, height, raw_pixels)
+        .unwrap()
+}
+
+fn save_image<P>(img: ImageBuffer<P, Vec<u8>>, path: &Path)
+    where P: image::Pixel<Subpixel=u8> + 'static {
     let path_str = match path
         .to_str() {
             Some(path) => path,

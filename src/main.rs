@@ -7,7 +7,7 @@ use crate::config::Config;
 
 use clap::{Arg, App};
 use image::{DynamicImage, GenericImageView, ImageBuffer};
-use log::{error, debug, info};
+use log::{error, debug, info, trace};
 use std::{path::Path, process};
 
 fn main() -> Result<()> {
@@ -88,7 +88,7 @@ fn main() -> Result<()> {
     debug!("Using configuration: {:?}", conf);
     
     let (width, height) = img.dimensions();
-    info!("Sorting {}x{} image", width, height);
+    info!("Sorting {}x{} image...", width, height);
 
     // sort image duh
     let sorted = sort_image(img, conf);
@@ -105,9 +105,9 @@ fn main() -> Result<()> {
 
 fn get_value(config: &Config, pixel: &image::Rgba<u8>) -> u8 {
     match config.mode {
-        config::Mode::Red   => pixel.data[2],
+        config::Mode::Red   => pixel.data[0],
         config::Mode::Green => pixel.data[1],
-        config::Mode::Blue  => pixel.data[0],
+        config::Mode::Blue  => pixel.data[2],
         config::Mode::Alpha => pixel.data[3],
         config::Mode::Luma  => {
             // https://en.wikipedia.org/wiki/Relative_luminance
@@ -158,7 +158,7 @@ fn sort_image(mut img: DynamicImage, config: Config)
                 let start_index = (y * width + start as u32) as usize;
                 let end_index = (y * width + end as u32) as usize;
 
-                debug!("sorting [{}..{}]", start_index, end_index);
+                trace!("sorting [{}..{}]", start_index, end_index);
 
                 pixels[start_index..end_index]
                     .sort_by_key(|p| get_value(&config, &p.2));

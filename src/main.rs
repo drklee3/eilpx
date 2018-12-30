@@ -86,6 +86,9 @@ fn main() -> Result<()> {
     let conf = Config::new(direction, mode, threshold);
 
     debug!("Using configuration: {:?}", conf);
+    
+    let (width, height) = img.dimensions();
+    info!("Sorting {}x{} image", width, height);
 
     // sort image duh
     let sorted = sort_image(img, conf);
@@ -122,10 +125,15 @@ fn meets_threshold(config: &Config, pixel: &image::Rgba<u8>) -> bool {
     value > config.threshold
 }
 
-fn sort_image(img: DynamicImage, config: Config)
-    -> image::RgbaImage {
+fn sort_image(mut img: DynamicImage, config: Config)
+    -> DynamicImage {
+    // rotate 90 deg to do vertical sorting
+    if config.direction.is_vertical() {
+        img = img.rotate90();
+    }
+
     let (width, height) = img.dimensions();
-    info!("Sorting {}x{} image", width, height);
+
     let buf = img.to_rgba();
     // vec of pixels rgb? so cant sort directly, need to convert
     // to vec<T> where T is an entire pixel w/ RGB data 
@@ -178,12 +186,19 @@ fn sort_image(img: DynamicImage, config: Config)
         .collect();
 
     // uses original width/height so should be large enough
-    ImageBuffer::from_vec(width, height, raw_pixels)
-        .unwrap()
+    let buf = ImageBuffer::from_vec(width, height, raw_pixels)
+        .unwrap();
+    let mut img = DynamicImage::ImageRgba8(buf);
+
+    // rotate back to original
+    if config.direction.is_vertical() {
+        img = img.rotate270();
+    }
+
+    img
 }
 
-fn save_image<P>(img: ImageBuffer<P, Vec<u8>>, path: &Path)
-    where P: image::Pixel<Subpixel=u8> + 'static {
+fn save_image(img: DynamicImage, path: &Path) {
     let path_str = match path
         .to_str() {
             Some(path) => path,

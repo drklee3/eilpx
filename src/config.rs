@@ -7,6 +7,15 @@ pub enum Direction {
     Vertical,
 }
 
+impl Direction {
+    pub fn is_vertical(&self) -> bool {
+        match self {
+            Direction::Horizontal => false,
+            Direction::Vertical => true,
+        }
+    }
+}
+
 impl FromStr for Direction {
     type Err = Error;
 

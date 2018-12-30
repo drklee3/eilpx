@@ -6,7 +6,7 @@ use crate::util::setup_logger;
 use crate::config::Config;
 
 use clap::{Arg, App};
-use image::{DynamicImage, GenericImageView, ImageBuffer, Pixel};
+use image::{DynamicImage, GenericImageView, ImageBuffer};
 use log::{error, debug, info};
 use std::{path::Path, process};
 

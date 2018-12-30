@@ -42,6 +42,13 @@ fn main() -> Result<()> {
             .short("t")
             .takes_value(true)
         )
+        .arg(Arg::with_name("bound")
+            .help("Sets threshold to be max or min")
+            .default_value("min")
+            .possible_values(&["min", "max"])
+            .short("b")
+            .takes_value(true)
+        )
         .arg(Arg::with_name("output")
             .help("Sets the output file")
             .short("o")
@@ -82,13 +89,21 @@ fn main() -> Result<()> {
     
     let threshold = matches
         .value_of("threshold");
+    
+    let bound = matches
+        .value_of("bound")
+        .unwrap();
 
-    let conf = Config::new(direction, mode, threshold);
+    let conf = Config::new(direction, mode, threshold, bound);
 
     debug!("Using configuration: {:?}", conf);
     
     let (width, height) = img.dimensions();
-    info!("Sorting {}x{} image...", width, height);
+    info!("Sorting {}x{} image {}ly based on {} with {} bound of {}",
+        width, height,
+        direction, mode,
+        conf.bound,
+        conf.threshold);
 
     // sort image duh
     let sorted = sort_image(img, conf);
@@ -120,9 +135,14 @@ fn get_value(config: &Config, pixel: &image::Rgba<u8>) -> u8 {
 
 fn meets_threshold(config: &Config, pixel: &image::Rgba<u8>) -> bool {
     let value = get_value(config, pixel);
-    // if value is greater than the threshold,
-    // could add option to let threshold be upper limit instead of lower
-    value > config.threshold
+
+    if config.bound == "min" {
+        // value is min threshold
+        value > config.threshold
+    } else {
+        // value is max threshold
+        value < config.threshold
+    }
 }
 
 fn sort_image(mut img: DynamicImage, config: Config)

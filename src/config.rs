@@ -65,14 +65,15 @@ impl FromStr for Mode {
 }
 
 #[derive(Debug)]
-pub struct Config {
+pub struct Config<'a> {
     pub direction: Direction,
     pub mode: Mode,
     pub threshold: u8,
+    pub bound: &'a str
 }
 
-impl Config {
-    pub fn new(dir: &str, mode: &str, threshold: Option<&str>) -> Self {
+impl<'a> Config<'a> {
+    pub fn new(dir: &str, mode: &str, threshold: Option<&str>, bound: &'a str) -> Self {
         let mode = Mode::from_str(mode).unwrap();
         let threshold = threshold
             .and_then(|t| t.parse::<u8>().ok())
@@ -82,6 +83,7 @@ impl Config {
             direction: Direction::from_str(dir).unwrap(),
             mode,
             threshold,
+            bound,
         }
     }
 }

@@ -55,7 +55,7 @@ Command
 
 ```bash
 # uses default settings: horizontally based on luma with min bound of 50
-$ eilpx -i img/lighthouse.jpg -o img/lighthouse_sorted.jpg
+eilpx -i img/lighthouse.jpg -o img/lighthouse_sorted.jpg
 ```
 
 Original                        | Sorted                               |

@@ -31,7 +31,7 @@ OPTIONS:
 Requires [Rust 2018](https://www.rust-lang.org/tools/install).
 
 ```bash
-cargo install --git https://github.com/drklee3/eilpx
+cargo install eilpx
 ```
 
 ## Examples

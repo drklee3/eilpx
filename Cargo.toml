@@ -1,5 +1,5 @@
 [package]
-name = "pixel-sorter"
+name = "eilpx"
 version = "0.1.0"
 authors = ["drklee3 <dlee3@scu.edu>"]
 edition = "2018"

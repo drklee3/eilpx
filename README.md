@@ -1,4 +1,4 @@
-# pixel-sorter
+# eilpx
 
 A command line tool to pixel sort images based on red, green, blue, alpha, or luma values.
 
@@ -6,7 +6,7 @@ A command line tool to pixel sort images based on red, green, blue, alpha, or lu
 
 ```text
 USAGE:
-    pixel-sorter [FLAGS] [OPTIONS] --input <input> --output <output>
+    eilpx [FLAGS] [OPTIONS] --input <input> --output <output>
 
 FLAGS:
     -h, --help       Prints help information
@@ -26,15 +26,12 @@ OPTIONS:
     -t, --threshold <threshold>    Sets threshold of sorting
 ```
 
-## Building from source
+## Installation
 
 Requires [Rust 2018](https://www.rust-lang.org/tools/install).
 
 ```bash
-git clone https://github.com/drklee3/pixel-sorter.git
-cd pixel-sorter
-
-cargo build --release
+cargo install --git https://github.com/drklee3/eilpx
 ```
 
 ## Examples
@@ -42,7 +39,7 @@ cargo build --release
 Command
 
 ```bash
-pixel-sorter -i img/tamsui.jpg -o img/tamsui_sorted.jpg -b max -t 175
+eilpx -i img/tamsui.jpg -o img/tamsui_sorted.jpg -b max -t 175
 #  -i img/tamsui.jpg           input file
 #  -o img/tamsui_sorted.jpg    output file
 #  -b max -t 175               sort only pixels with a max luma value of 175
@@ -55,7 +52,7 @@ Original                    | Sorted                           |
 Command
 
 ```bash
-pixel-sorter -i img/lighthouse.jpg -o img/lighthouse_sorted.jpg
+eilpx -i img/lighthouse.jpg -o img/lighthouse_sorted.jpg
 ```
 
 Original                        | Sorted                               |

@@ -1,5 +1,7 @@
 # eilpx
 
+[![crates.io](https://img.shields.io/crates/v/eilpx.svg)](https://crates.io/crates/eilpx) [![Build Status](https://travis-ci.org/drklee3/eilpx.svg?branch=master)](https://travis-ci.org/drklee3/eilpx)
+
 A command line tool to pixel sort images based on red, green, blue, alpha, or luma values.
 
 ## Usage

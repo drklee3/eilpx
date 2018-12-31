@@ -6,22 +6,27 @@ A command line tool to pixel sort images based on red, green, blue, alpha, or lu
 
 ```text
 USAGE:
-    pixel-sorter [FLAGS] [OPTIONS] -i <input> -o <output>
+    pixel-sorter [FLAGS] [OPTIONS] --input <input> --output <output>
 
 FLAGS:
     -h, --help       Prints help information
+    -y               Overwrite output files without asking
+    -n               Do not overwrite output files, exit immediately if output file already exists
     -V, --version    Prints version information
     -v               Sets the level of verbosity
 
 OPTIONS:
-    -d <direction>        Sets direction of sorting [default: horizontal]  [possible values: horizontal, vertical]
-    -i <input>            Sets the input file
-    -m <mode>             Sets mode of sorting [default: luma]  [possible values: red, green, blue, alpha, luma]
-    -o <output>           Sets the output file
-    -t <threshold>        Sets threshold of sorting
+    -b, --bound <bound>            Sets threshold to be max or min [default: min]  [possible values: min, max]
+    -d, --direction <direction>    Sets direction of sorting [default: horizontal]  [possible values: horizontal,
+                                   vertical]
+    -i, --input <input>            Sets the input file
+    -m, --mode <mode>              Sets mode of sorting [default: luma]  [possible values: red, green, blue, alpha,
+                                   luma]
+    -o, --output <output>          Sets the output file
+    -t, --threshold <threshold>    Sets threshold of sorting
 ```
 
-## Building
+## Building from source
 
 Requires [Rust 2018](https://www.rust-lang.org/tools/install).
 
@@ -34,6 +39,8 @@ cargo build --release
 
 ## Examples
 
+Command
+
 ```bash
 pixel-sorter -i img/tamsui.jpg -o img/tamsui_sorted.jpg -b max -t 175
 #  -i img/tamsui.jpg           input file
@@ -41,15 +48,16 @@ pixel-sorter -i img/tamsui.jpg -o img/tamsui_sorted.jpg -b max -t 175
 #  -b max -t 175               sort only pixels with a max luma value of 175
 ```
 
-Original Image | Sorted Image |
--------------- | ------------ |
-![Original Image](img/tamsui.jpg) | ![Sorted Image](img/tamsui_sorted.jpg) |
+Original                    | Sorted                           |
+--------------------------- | -------------------------------- |
+![Original](img/tamsui.jpg) | ![Sorted](img/tamsui_sorted.jpg) |
 
+Command
 
 ```bash
 pixel-sorter -i img/lighthouse.jpg -o img/lighthouse_sorted.jpg
 ```
 
-Original Image | Sorted Image |
--------------- | ------------ |
-![Original Image](img/lighthouse.jpg) | ![Sorted Image](img/lighthouse_sorted.jpg) |
+Original                        | Sorted                               |
+------------------------------- | ------------------------------------ |
+![Original](img/lighthouse.jpg) | ![Sorted](img/lighthouse_sorted.jpg) |

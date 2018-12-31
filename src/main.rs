@@ -8,7 +8,8 @@ use crate::config::Config;
 use clap::{Arg, App};
 use image::{DynamicImage, GenericImageView, ImageBuffer};
 use log::{error, debug, info, trace};
-use std::{path::Path, process};
+use std::{io, path::Path, process};
+use std::io::Write;
 
 fn main() -> Result<()> {
     let matches = App::new(env!("CARGO_PKG_NAME"))
@@ -18,12 +19,14 @@ fn main() -> Result<()> {
         .arg(Arg::with_name("input")
             .help("Sets the input file")
             .short("i")
+            .long("input")
             .required(true)
             .takes_value(true)
         )
         .arg(Arg::with_name("direction")
             .help("Sets direction of sorting")
             .short("d")
+            .long("direction")
             .default_value("horizontal")
             .possible_values(&["horizontal", "vertical"])
             .case_insensitive(true)
@@ -32,6 +35,7 @@ fn main() -> Result<()> {
         .arg(Arg::with_name("mode")
             .help("Sets mode of sorting")
             .short("m")
+            .long("mode")
             .default_value("luma")
             .possible_values(&["red", "green", "blue", "alpha", "luma"])
             .case_insensitive(true)
@@ -40,20 +44,31 @@ fn main() -> Result<()> {
         .arg(Arg::with_name("threshold")
             .help("Sets threshold of sorting")
             .short("t")
+            .long("threshold")
             .takes_value(true)
         )
         .arg(Arg::with_name("bound")
             .help("Sets threshold to be max or min")
+            .short("b")
+            .long("bound")
             .default_value("min")
             .possible_values(&["min", "max"])
-            .short("b")
             .takes_value(true)
         )
         .arg(Arg::with_name("output")
             .help("Sets the output file")
             .short("o")
+            .long("output")
             .required(true)
             .takes_value(true)
+        )
+        .arg(Arg::with_name("overwrite")
+            .help("Overwrite output files without asking")
+            .short("y")
+        )
+        .arg(Arg::with_name("skip_existing")
+            .help("Do not overwrite output files, exit immediately if output file already exists")
+            .short("n")
         )
         .arg(Arg::with_name("verbosity")
             .short("v")
@@ -93,6 +108,45 @@ fn main() -> Result<()> {
     let bound = matches
         .value_of("bound")
         .unwrap();
+    
+    let output_path_str = matches
+        .value_of("output")
+        .unwrap();
+    
+    let output_path = Path::new(output_path_str);
+    
+    let should_overwrite = matches
+        .is_present("overwrite");
+    
+    let should_skip = matches
+        .is_present("skip_existing");
+    
+    if output_path.is_file() && !should_overwrite {
+        if should_skip {
+            error!("File `{}` already exists.", output_path_str);
+            process::exit(0);
+        }
+
+        print!("File '{}' already exists.  Overwrite? [y/N] ",
+            output_path_str);
+        
+        // flush stdout to display line above
+        io::stdout()
+            .flush()
+            .expect("Failed to flush stdout");
+
+        // get user input
+        let mut input = String::new();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read from stdin");
+        
+        // quit if input isn't y
+        if input != "y\n" {
+            info!("Exiting.");
+            process::exit(1);
+        }
+    }
 
     let conf = Config::new(direction, mode, threshold, bound);
 
@@ -108,10 +162,6 @@ fn main() -> Result<()> {
     // sort image duh
     let sorted = sort_image(img, conf);
 
-    let output_path = matches
-        .value_of("output")
-        .map(Path::new)
-        .unwrap();
     // save image duh
     save_image(sorted, output_path);
 

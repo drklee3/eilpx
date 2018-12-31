@@ -1,7 +1,13 @@
 [package]
 name = "eilpx"
-version = "0.1.0"
 authors = ["drklee3 <dlee3@scu.edu>"]
+description = "Command line tool to pixel sort images based on colour, alpha, or luma values."
+homepage = "https://github.com/drklee3/eilpx"
+repository = "https://github.com/drklee3/eilpx.git"
+keywords = ["pixel", "sorter", "sorting"]
+license = "ISC"
+readme = "README.md"
+version = "0.1.0"
 edition = "2018"
 
 [dependencies]

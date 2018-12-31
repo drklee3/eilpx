@@ -4,6 +4,14 @@
 
 A command line tool to pixel sort images based on red, green, blue, alpha, or luma values.
 
+## Installation
+
+Requires [Rust 2018](https://www.rust-lang.org/tools/install).  Eilpx can be installed via [crates.io](https://crates.io/crates/eilpx) with the following command.
+
+```bash
+cargo install eilpx
+```
+
 ## Usage
 
 ```text
@@ -28,14 +36,6 @@ OPTIONS:
     -t, --threshold <threshold>    Sets threshold of sorting
 ```
 
-## Installation
-
-Requires [Rust 2018](https://www.rust-lang.org/tools/install).
-
-```bash
-cargo install eilpx
-```
-
 ## Examples
 
 Command
@@ -54,7 +54,8 @@ Original                    | Sorted                           |
 Command
 
 ```bash
-eilpx -i img/lighthouse.jpg -o img/lighthouse_sorted.jpg
+# uses default settings: horizontally based on luma with min bound of 50
+$ eilpx -i img/lighthouse.jpg -o img/lighthouse_sorted.jpg
 ```
 
 Original                        | Sorted                               |

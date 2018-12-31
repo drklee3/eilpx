@@ -69,6 +69,7 @@ fn main() -> Result<()> {
         .arg(Arg::with_name("skip_existing")
             .help("Do not overwrite output files, exit immediately if output file already exists")
             .short("n")
+            .conflicts_with("overwrite")
         )
         .arg(Arg::with_name("verbosity")
             .short("v")

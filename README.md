@@ -27,8 +27,7 @@ FLAGS:
 
 OPTIONS:
     -b, --bound <bound>            Sets threshold to be max or min [default: min]  [possible values: min, max]
-    -d, --direction <direction>    Sets direction of sorting [default: horizontal]  [possible values: horizontal,
-                                   vertical]
+    -d, --direction <direction>    Sets direction of sorting [default: right]  [possible values: up, right, down, left]
     -i, --input <input>            Sets the input file
     -m, --mode <mode>              Sets mode of sorting [default: luma]  [possible values: red, green, blue, alpha,
                                    luma]

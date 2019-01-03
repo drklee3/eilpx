@@ -3,15 +3,28 @@ use crate::error::{Error, Result};
 
 #[derive(Debug)]
 pub enum Direction {
-    Horizontal,
-    Vertical,
+    Up,
+    Right,
+    Down,
+    Left,
 }
 
 impl Direction {
     pub fn is_vertical(&self) -> bool {
         match self {
-            Direction::Horizontal => false,
-            Direction::Vertical => true,
+            Direction::Up
+            | Direction::Down => true,
+            Direction::Right
+            | Direction::Left => false,
+        }
+    }
+
+    pub fn is_reverse(&self) -> bool {
+        match self {
+            Direction::Left
+            | Direction::Up => true,
+            Direction::Right
+            | Direction::Down => false,
         }
     }
 }
@@ -21,8 +34,10 @@ impl FromStr for Direction {
 
     fn from_str(s: &str) -> Result<Direction> {
         match s {
-            "horizontal" => Ok(Direction::Horizontal),
-            "vertical" => Ok(Direction::Vertical),
+            "up" => Ok(Direction::Up),
+            "right" => Ok(Direction::Right),
+            "down" => Ok(Direction::Down),
+            "left" => Ok(Direction::Left),
             _ => unreachable!(),
         }
     }

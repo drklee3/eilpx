@@ -27,8 +27,8 @@ fn main() -> Result<()> {
             .help("Sets direction of sorting")
             .short("d")
             .long("direction")
-            .default_value("horizontal")
-            .possible_values(&["horizontal", "vertical"])
+            .default_value("right")
+            .possible_values(&["up", "right", "down", "left"])
             .case_insensitive(true)
             .takes_value(true)
         )
@@ -154,7 +154,7 @@ fn main() -> Result<()> {
     debug!("Using configuration: {:?}", conf);
     
     let (width, height) = img.dimensions();
-    info!("Sorting {}x{} image {}ly based on {} with {} bound of {}",
+    info!("Sorting {}x{} image {}wards based on {} with {} bound of {}",
         width, height,
         direction, mode,
         conf.bound,
@@ -203,6 +203,13 @@ fn sort_image(mut img: DynamicImage, config: Config)
         img = img.rotate90();
     }
 
+    // 8 bits not enough for signed
+    let rev: i16 = if config.direction.is_reverse() {
+        -1
+    } else {
+        1
+    };
+
     let (width, height) = img.dimensions();
 
     let buf = img.to_rgba();
@@ -232,7 +239,7 @@ fn sort_image(mut img: DynamicImage, config: Config)
                 trace!("sorting [{}..{}]", start_index, end_index);
 
                 pixels[start_index..end_index]
-                    .sort_by_key(|p| get_value(&config, &p.2));
+                    .sort_by_key(|p| rev * get_value(&config, &p.2) as i16);
             }
 
             // reset threshold

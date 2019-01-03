@@ -178,9 +178,9 @@ fn get_value(config: &Config, pixel: &image::Rgba<u8>) -> u8 {
         config::Mode::Alpha => pixel.data[3],
         config::Mode::Luma  => {
             // https://en.wikipedia.org/wiki/Relative_luminance
-             (0.2126 * pixel.data[2] as f64
+             (0.2126 * pixel.data[0] as f64
              + 0.7152 * pixel.data[1] as f64
-             + 0.0722 * pixel.data[0] as f64) as u8
+             + 0.0722 * pixel.data[2] as f64) as u8
         },
     }
 }

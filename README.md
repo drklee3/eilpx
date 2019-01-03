@@ -53,7 +53,7 @@ Original                    | Sorted                           |
 Command
 
 ```bash
-# uses default settings: horizontally based on luma with min bound of 50
+# uses default settings: rightwards based on luma with min bound of 50
 eilpx -i img/lighthouse.jpg -o img/lighthouse_sorted.jpg
 ```
 

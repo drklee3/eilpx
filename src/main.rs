@@ -169,6 +169,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+/// Gets the value of a pixel based on configuration mode
 fn get_value(config: &Config, pixel: &image::Rgba<u8>) -> u8 {
     match config.mode {
         config::Mode::Red   => pixel.data[0],
@@ -184,6 +185,7 @@ fn get_value(config: &Config, pixel: &image::Rgba<u8>) -> u8 {
     }
 }
 
+/// Returns true if a pixel meets the configured threshold
 fn meets_threshold(config: &Config, pixel: &image::Rgba<u8>) -> bool {
     let value = get_value(config, pixel);
 
@@ -196,6 +198,7 @@ fn meets_threshold(config: &Config, pixel: &image::Rgba<u8>) -> bool {
     }
 }
 
+/// Sorts an image
 fn sort_image(mut img: DynamicImage, config: Config)
     -> DynamicImage {
     // rotate 90 deg to do vertical sorting
@@ -276,6 +279,7 @@ fn sort_image(mut img: DynamicImage, config: Config)
     img
 }
 
+/// Saves a DynamicImage to disk
 fn save_image(img: DynamicImage, path: &Path) {
     let path_str = match path
         .to_str() {

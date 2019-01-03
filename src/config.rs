@@ -1,6 +1,7 @@
 use std::str::FromStr;
 use crate::error::{Error, Result};
 
+/// A direction of sorting
 #[derive(Debug)]
 pub enum Direction {
     Up,
@@ -10,6 +11,7 @@ pub enum Direction {
 }
 
 impl Direction {
+    /// Returns true if image is sorted vertically
     pub fn is_vertical(&self) -> bool {
         match self {
             Direction::Up
@@ -19,6 +21,7 @@ impl Direction {
         }
     }
 
+    /// Returns true if the direction requires a reversed sort
     pub fn is_reverse(&self) -> bool {
         match self {
             Direction::Left
@@ -31,7 +34,7 @@ impl Direction {
 
 impl FromStr for Direction {
     type Err = Error;
-
+    
     fn from_str(s: &str) -> Result<Direction> {
         match s {
             "up" => Ok(Direction::Up),
@@ -43,6 +46,7 @@ impl FromStr for Direction {
     }
 }
 
+/// A mode to sort on
 #[derive(Debug)]
 pub enum Mode {
     Red,
@@ -53,6 +57,7 @@ pub enum Mode {
 }
 
 impl Mode {
+    /// Gets the default threshold value for a mode
     fn default_threshold(&self) -> u8 {
         match self {
             Mode::Red   => 100,
@@ -79,6 +84,7 @@ impl FromStr for Mode {
     }
 }
 
+/// Configuration options for pixel sorting
 #[derive(Debug)]
 pub struct Config<'a> {
     pub direction: Direction,
@@ -88,6 +94,7 @@ pub struct Config<'a> {
 }
 
 impl<'a> Config<'a> {
+    /// Creates a new config from string values
     pub fn new(dir: &str, mode: &str, threshold: Option<&str>, bound: &'a str) -> Self {
         let mode = Mode::from_str(mode).unwrap();
         let threshold = threshold

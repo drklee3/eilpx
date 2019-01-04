@@ -1,0 +1,27 @@
+parameters:
+  name: ''
+  vmImage: ''
+  toolchain: 'stable'
+
+jobs:
+- job: ${{ parameters.name }}
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
+  variables:
+    tc: ${{ parameters.toolchain }}
+  steps: 
+  - powershell: |
+      echo "2: $env:TC"
+      echo "4: $(tc)"
+      Invoke-WebRequest -Uri "https://win.rustup.rs" -OutFile "rustup-init.exe"
+      &".\rustup-init.exe" --default-toolchain $(tc) -y
+    displayName: 'Install rust'
+  - powershell: |
+      &"$env:USERPROFILE\.cargo\bin\cargo" build --release
+      &"$env:USERPROFILE\.cargo\bin\cargo" test
+    displayName: 'Build eilpx'
+  - task: PublishBuildArtifacts@1
+    condition: eq('${{ parameters.toolchain }}', 'stable')
+    inputs:
+      pathtoPublish: 'target\release\eilpx.exe'
+      artifactName: 'eilpx-$(Build.BuildNumber)-$(Agent.OS)'

@@ -1,0 +1,64 @@
+# azure pipelines configs derived from Erk-/rsget
+# https://github.com/Erk-/rsget/blob/master/azure-pipelines.yml
+
+trigger:
+  branches:
+    include:
+      - refs/heads/master
+      - refs/heads/azure-pipelines
+      - refs/tags/*
+
+jobs:
+- template: 'azure-template.yml'
+  parameters:
+    name: 'macOS_stable'
+    vmImage: 'xcode9-macos10.13'
+    toolchain: 'stable'
+
+- template: 'azure-template.yml'
+  parameters:
+    name: 'macOS_nightly'
+    vmImage: 'xcode9-macos10.13'
+    toolchain: 'nightly'
+
+- template: 'azure-template.yml'
+  parameters:
+    name: 'Linux_stable'
+    vmImage: 'ubuntu-16.04'
+    toolchain: 'stable'
+
+- template: 'azure-template.yml'
+  parameters:
+    name: 'Linux_nightly'
+    vmImage: 'ubuntu-16.04'
+    toolchain: 'nightly'
+
+- template: 'azure-template-win.yml'
+  parameters:
+    name: 'Windows_stable'
+    vmImage: 'vs2017-win2016'
+    toolchain: 'stable'
+
+- template: 'azure-template-win.yml'
+  parameters:
+    name: 'Windows_nightly'
+    vmImage: 'vs2017-win2016'
+    toolchain: 'nightly'
+
+- job: Publish Release
+  dependsOn:
+  - macOS_stable
+  - Linux_stable
+  - Windows_stable
+  condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/tags/'))
+  steps:
+  - task: GithubRelease@0
+    inputs:
+      gitHubConnection: 
+      repositoryName: 
+      action: 'create' # Options: create, edit, discard
+      target: '$(build.sourceVersion)' # Required when action == create || action == edit
+      tagSource: 'auto' # Required when action == create. Options: auto, manual
+      tag: $(tagName) # Required when action == edit || action == discard || tagSource == manual
+      assets: '$(build.artifactStagingDirectory)/*'
+      addChangeLog: true # Optional

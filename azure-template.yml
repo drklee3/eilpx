@@ -1,0 +1,24 @@
+parameters:
+  name: ''
+  vmImage: ''
+  toolchain: 'stable'
+
+jobs:
+- job: ${{ parameters.name }}
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
+  variables:
+    tc: ${{ parameters.toolchain }}
+  steps: 
+  - bash: |
+      curl -o rustup-init.sh https://sh.rustup.rs -sSf
+      sh rustup-init.sh --default-toolchain $(tc) -y
+    displayName: 'Install rust'
+  - bash: |
+      source $HOME/.cargo/env
+      cargo build --release
+    displayName: 'Build eilpx'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: 'target/release/eilpx'
+      artifactName: 'eilpx-$(Build.BuildNumber)-$(Agent.OS)'

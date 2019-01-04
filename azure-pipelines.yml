@@ -45,7 +45,7 @@ jobs:
     vmImage: 'vs2017-win2016'
     toolchain: 'nightly'
 
-- job: Publish Release
+- job: Publish_release
   dependsOn:
   - macOS_stable
   - Linux_stable

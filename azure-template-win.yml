@@ -20,7 +20,7 @@ jobs:
       &"$env:USERPROFILE\.cargo\bin\cargo" build --release
     displayName: 'Build eilpx'
   - task: PublishBuildArtifacts@1
-    condition: eq(${{ parameters.toolchain }}, 'stable')
+    condition: eq(parameters.toolchain, 'stable')
     inputs:
       pathtoPublish: 'target\release\eilpx.exe'
       artifactName: 'eilpx-$(Build.BuildNumber)-$(Agent.OS)'

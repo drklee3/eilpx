@@ -54,8 +54,8 @@ jobs:
   steps:
   - task: GithubRelease@0
     inputs:
-      gitHubConnection: 
-      repositoryName: 
+      gitHubConnection: 'drklee3'
+      repositoryName: 'eilpx'
       action: 'create' # Options: create, edit, discard
       target: '$(build.sourceVersion)' # Required when action == create || action == edit
       tagSource: 'auto' # Required when action == create. Options: auto, manual

@@ -17,6 +17,7 @@ jobs:
   - bash: |
       source $HOME/.cargo/env
       cargo build --release
+      cargo test
     displayName: 'Build eilpx'
   - task: PublishBuildArtifacts@1
     condition: eq('${{ parameters.toolchain }}', 'stable')

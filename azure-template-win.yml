@@ -18,6 +18,7 @@ jobs:
     displayName: 'Install rust'
   - powershell: |
       &"$env:USERPROFILE\.cargo\bin\cargo" build --release
+      &"$env:USERPROFILE\.cargo\bin\cargo" test
     displayName: 'Build eilpx'
   - task: PublishBuildArtifacts@1
     condition: eq('${{ parameters.toolchain }}', 'stable')

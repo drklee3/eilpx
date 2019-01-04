@@ -2,7 +2,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/eilpx.svg)](https://crates.io/crates/eilpx) [![Build Status](https://travis-ci.org/drklee3/eilpx.svg?branch=master)](https://travis-ci.org/drklee3/eilpx)
 
-A command line tool to pixel sort images based on red, green, blue, alpha, or luma values.
+A command line pixel sorter.  Sorts pixels in images based on red, green, blue, alpha, or luma values in given directions based on configurable threshold values.
 
 ## Installation
 

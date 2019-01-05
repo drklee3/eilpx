@@ -52,6 +52,19 @@ jobs:
   - Windows_stable
   condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/tags/'))
   steps:
+  - bash: |
+      echo $(build.artifactStagingDirectory)
+      ls $(build.artifactStagingDirectory)
+      
+      echo $(build.binariesDirectory)
+      ls $(build.binariesDirectory)
+      
+      echo $(build.sourcesDirectory)
+      ls $(build.sourcesDirectory)
+      
+      echo $(build.stagingDirectory)
+      ls $(build.stagingDirectory)
+      
   - task: GithubRelease@0
     inputs:
       gitHubConnection: 'drklee3-gh'

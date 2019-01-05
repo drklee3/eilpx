@@ -52,17 +52,22 @@ jobs:
   - Windows_stable
   condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/tags/'))
   steps:
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      buildType: 'current'
+      itemPattern: '**'
+      downloadPath: '$(build.artifactStagingDirectory)'
   - bash: |
-      echo "$(build.artifactStagingDirectory)"
+      echo "build.artifactStagingDirectory $(build.artifactStagingDirectory)"
       ls $(build.artifactStagingDirectory)
 
-      echo "$(build.binariesDirectory)"
+      echo "build.binariesDirectory $(build.binariesDirectory)"
       ls $(build.binariesDirectory)
 
-      echo "$(build.sourcesDirectory)"
+      echo "build.sourcesDirectory $(build.sourcesDirectory)"
       ls $(build.sourcesDirectory)
 
-      echo "$(build.stagingDirectory)"
+      echo "build.stagingDirectory $(build.stagingDirectory)"
       ls $(build.stagingDirectory)
 
   - task: GithubRelease@0

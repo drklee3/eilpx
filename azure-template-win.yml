@@ -20,10 +20,6 @@ jobs:
       &"$env:USERPROFILE\.cargo\bin\cargo" build --release
       &"$env:USERPROFILE\.cargo\bin\cargo" test
     displayName: 'Build eilpx'
-  - task: CopyFiles@2
-    inputs:
-      contents: 'target\release\eilpx.exe'
-      targetfolder: $(Build.ArtifactStagingDirectory)
   - task: PublishBuildArtifacts@1
     condition: eq('${{ parameters.toolchain }}', 'stable')
     inputs:

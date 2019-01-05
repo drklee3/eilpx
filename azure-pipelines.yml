@@ -53,9 +53,22 @@ jobs:
   condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/tags/'))
   steps:
   - task: DownloadBuildArtifacts@0
+    displayName: "Download MacOS Artifacts"
     inputs:
       buildType: 'current'
-      itemPattern: '**'
+      artifactName: 'eilpx-$(Build.BuildNumber)-Darwin'
+      downloadPath: '$(build.artifactStagingDirectory)'
+  - task: DownloadBuildArtifacts@0
+    displayName: "Download Linux Artifacts"
+    inputs:
+      buildType: 'current'
+      artifactName: 'eilpx-$(Build.BuildNumber)-Linux'
+      downloadPath: '$(build.artifactStagingDirectory)'
+  - task: DownloadBuildArtifacts@0
+    displayName: "Download Windows Artifacts"
+    inputs:
+      buildType: 'current'
+      artifactName: 'eilpx-$(Build.BuildNumber)-Windows_NT'
       downloadPath: '$(build.artifactStagingDirectory)'
   - bash: |
       echo "build.artifactStagingDirectory $(build.artifactStagingDirectory)"

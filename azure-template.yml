@@ -19,6 +19,10 @@ jobs:
       cargo build --release
       cargo test
     displayName: 'Build eilpx'
+  - task: CopyFiles@2
+    inputs:
+      contents: 'target/release/eilpx'
+      targetfolder: $(Build.ArtifactStagingDirectory)
   - task: PublishBuildArtifacts@1
     condition: eq('${{ parameters.toolchain }}', 'stable')
     inputs:

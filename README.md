@@ -1,12 +1,16 @@
 # eilpx
 
-[![crates.io](https://img.shields.io/crates/v/eilpx.svg)](https://crates.io/crates/eilpx) [![Build Status](https://travis-ci.org/drklee3/eilpx.svg?branch=master)](https://travis-ci.org/drklee3/eilpx)
+[![crates.io](https://img.shields.io/crates/v/eilpx.svg)](https://crates.io/crates/eilpx)
+[![Build Status](https://travis-ci.org/drklee3/eilpx.svg?branch=master)](https://travis-ci.org/drklee3/eilpx)
+[![Build Status](https://dev.azure.com/dlee3/dlee3/_apis/build/status/drklee3.eilpx?branchName=master)](https://dev.azure.com/dlee3/dlee3/_build/latest?definitionId=2?branchName=master)
 
 A command line pixel sorter.  Sorts pixels in images based on red, green, blue, alpha, or luma values in given directions based on configurable threshold values.
 
 ## Installation
 
-Requires [Rust 2018](https://www.rust-lang.org/tools/install).  Eilpx can be installed via [crates.io](https://crates.io/crates/eilpx) with the following command.
+Precompiled binaries for Windows, macOS and Linux can be downloaded via [releases](https://github.com/drklee3/eilpx/releases).  You can also download artifacts on [Azure Pipelines](https://dev.azure.com/dlee3/dlee3/_build?definitionId=2) for builds on the master branch.
+
+Eilpx can also be installed via [crates.io](https://crates.io/crates/eilpx).  Requires [Rust 2018](https://www.rust-lang.org/tools/install).
 
 ```bash
 cargo install eilpx

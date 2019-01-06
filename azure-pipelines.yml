@@ -59,8 +59,10 @@ jobs:
       artifactName: 'eilpx-$(Build.BuildNumber)-Darwin'
       downloadPath: '$(build.artifactStagingDirectory)'
   - bash: |
+      pwd
       cd $(build.artifactStagingDirectory)/eilpx-$(Build.BuildNumber)-Darwin/
-      mv $(build.artifactStagingDirectory)/eilpx{,-osx-x86_64}
+      pwd
+      mv eilpx $(build.artifactStagingDirectory)/eilpx-osx-x86_64
 
   - task: DownloadBuildArtifacts@0
     displayName: "Download Linux Artifacts"
@@ -70,7 +72,7 @@ jobs:
       downloadPath: '$(build.artifactStagingDirectory)'
   - bash: |
       cd $(build.artifactStagingDirectory)/eilpx-$(Build.BuildNumber)-Linux/
-      mv $(build.artifactStagingDirectory)/eilpx{,-linux-x86_64}
+      mv eilpx $(build.artifactStagingDirectory)/eilpx-linux-x86_64
 
   - task: DownloadBuildArtifacts@0
     displayName: "Download Windows Artifacts"

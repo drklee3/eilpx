@@ -1,8 +1,8 @@
 # eilpx
 
 [![crates.io](https://img.shields.io/crates/v/eilpx.svg)](https://crates.io/crates/eilpx)
-[![Build Status](https://travis-ci.org/drklee3/eilpx.svg?branch=master)](https://travis-ci.org/drklee3/eilpx)
-[![Build Status](https://dev.azure.com/dlee3/dlee3/_apis/build/status/drklee3.eilpx?branchName=master)](https://dev.azure.com/dlee3/dlee3/_build/latest?definitionId=2?branchName=master)
+[![Travis Build Status](https://travis-ci.org/drklee3/eilpx.svg?branch=master)](https://travis-ci.org/drklee3/eilpx)
+[![Azure Build Status](https://dev.azure.com/dlee3/dlee3/_apis/build/status/drklee3.eilpx?branchName=master)](https://dev.azure.com/dlee3/dlee3/_build/latest?definitionId=2?branchName=master)
 
 A command line pixel sorter.  Sorts pixels in images based on red, green, blue, alpha, or luma values in given directions based on configurable threshold values.
 

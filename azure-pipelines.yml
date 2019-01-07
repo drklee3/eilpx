@@ -47,23 +47,11 @@ jobs:
 
 - job: Publish_release
   dependsOn:
-  - macOS_stable
   - Linux_stable
+  - macOS_stable
   - Windows_stable
   condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/tags/'))
   steps:
-  - task: DownloadBuildArtifacts@0
-    displayName: "Download MacOS Artifacts"
-    inputs:
-      buildType: 'current'
-      artifactName: 'eilpx-$(Build.BuildNumber)-Darwin'
-      downloadPath: '$(build.artifactStagingDirectory)'
-  - bash: |
-      cd $(build.artifactStagingDirectory)/eilpx-$(Build.BuildNumber)-Darwin/
-      mv eilpx $(build.artifactStagingDirectory)/eilpx-osx-x86_64
-      rm -rf $(build.artifactStagingDirectory)/eilpx-$(Build.BuildNumber)-Darwin/
-    displayName: "Move MacOS Artifacts"
-
   - task: DownloadBuildArtifacts@0
     displayName: "Download Linux Artifacts"
     inputs:
@@ -71,10 +59,22 @@ jobs:
       artifactName: 'eilpx-$(Build.BuildNumber)-Linux'
       downloadPath: '$(build.artifactStagingDirectory)'
   - bash: |
-      cd $(build.artifactStagingDirectory)/eilpx-$(Build.BuildNumber)-Linux/
-      mv eilpx $(build.artifactStagingDirectory)/eilpx-linux-x86_64
-      rm -rf $(build.artifactStagingDirectory)/eilpx-$(Build.BuildNumber)-Linux/
-    displayName: "Move Linux Artifacts"
+      cd $(build.artifactStagingDirectory)/
+      tar czf eilpx-$(Build.BuildNumber)-Linux.tar.gz -C eilpx-$(Build.BuildNumber)-Linux/ .
+      rm -rf eilpx-$(Build.BuildNumber)-Linux/
+    displayName: "Tar Linux Artifacts"
+
+  - task: DownloadBuildArtifacts@0
+    displayName: "Download MacOS Artifacts"
+    inputs:
+      buildType: 'current'
+      artifactName: 'eilpx-$(Build.BuildNumber)-Darwin'
+      downloadPath: '$(build.artifactStagingDirectory)'
+  - bash: |
+      cd $(build.artifactStagingDirectory)/
+      zip -rj eilpx-$(Build.BuildNumber)-Darwin.zip eilpx-$(Build.BuildNumber)-Darwin/
+      rm -rf eilpx-$(Build.BuildNumber)-Darwin/
+    displayName: "Zip MacOS Artifacts"
 
   - task: DownloadBuildArtifacts@0
     displayName: "Download Windows Artifacts"
@@ -83,10 +83,10 @@ jobs:
       artifactName: 'eilpx-$(Build.BuildNumber)-Windows_NT'
       downloadPath: '$(build.artifactStagingDirectory)'
   - bash: |
-      cd $(build.artifactStagingDirectory)/eilpx-$(Build.BuildNumber)-Windows_NT/
-      mv eilpx.exe $(build.artifactStagingDirectory)/eilpx-windows-x86_64.exe
-      rm -rf $(build.artifactStagingDirectory)/eilpx-$(Build.BuildNumber)-Windows_NT/
-    displayName: "Move Windows Artifacts"
+      cd $(build.artifactStagingDirectory)/
+      zip -rj eilpx-$(Build.BuildNumber)-Windows_NT.zip eilpx-$(Build.BuildNumber)-Windows_NT/
+      rm -rf eilpx-$(Build.BuildNumber)-Windows_NT/
+    displayName: "Zip Windows Artifacts"
 
   - bash: |
       echo "build.artifactStagingDirectory $(build.artifactStagingDirectory)"

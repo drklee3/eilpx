@@ -8,8 +8,16 @@ use crate::config::Config;
 use clap::{Arg, App};
 use image::{DynamicImage, GenericImageView, ImageBuffer};
 use log::{error, debug, info, trace};
-use std::{io, path::Path, process};
-use std::io::Write;
+use std::{
+    io::{
+        self,
+        BufRead,
+        Read,
+        Write,
+    },
+    path::Path,
+    process,
+};
 
 fn main() -> Result<()> {
     let matches = App::new(env!("CARGO_PKG_NAME"))
@@ -18,10 +26,13 @@ fn main() -> Result<()> {
         .about(env!("CARGO_PKG_DESCRIPTION"))
         .arg(Arg::with_name("input")
             .help("Sets the input file")
-            .short("i")
-            .long("input")
-            .required(true)
+            .index(1)
             .takes_value(true)
+        )
+        .arg(Arg::with_name("stdin")
+            .help("Reads file from stdin")
+            .short("i")
+            .conflicts_with("input")
         )
         .arg(Arg::with_name("direction")
             .help("Sets direction of sorting")
@@ -76,18 +87,36 @@ fn main() -> Result<()> {
             .multiple(true)
             .help("Sets the level of verbosity"))
         .get_matches();
-    
-    // get file input
-    let input = matches
-        .value_of("input")
-        .unwrap();
 
     let verbosity: u64 = matches.occurrences_of("verbosity");
     setup_logger(verbosity)?;
 
-    info!("Opening file: {}", input);
+    // get file input
+    let input = matches
+        .value_of("input");
+    
+    let from_stdin = matches.is_present("stdin");
+    
+    let img = if let Some(input) = input {
+        info!("Opening file: {}", input);
+        image::open(input)
+    } else if from_stdin {
+        info!("Reading file from stdin");
+        let mut buf = Vec::new();
+        let stdin = io::stdin();
+        let mut handle = stdin.lock();
+        if let Err(_) = handle.read_to_end(&mut buf) {
+            error!("Failed to read image from stdin");
+            process::exit(1);
+        }
 
-    let img = match image::open(input) {
+        image::load_from_memory(&buf[..])
+    } else {
+        error!("Input is required");
+        process::exit(1);
+    };
+
+    let img = match img {
         Ok(i) => i,
         Err(e) => {
             error!("Failed to open file: {}", e);
@@ -137,15 +166,14 @@ fn main() -> Result<()> {
             .expect("Failed to flush stdout");
 
         // get user input
-        let mut input = String::new();
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read from stdin");
-        
-        // quit if input isn't y
-        if input != "y\n" {
-            info!("Exiting.");
-            process::exit(1);
+        let stdin = io::stdin();
+        for line in stdin.lock().lines() {
+            let line = line.expect("Failed to read stdin");
+            // quit if input isn't y
+            if line != "y\n" && !line.is_empty() {
+                info!("Exiting.");
+                process::exit(1);
+            }
         }
     }
 
